@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element audit="true" extends="cmdb_ci_appl" label="BizTalk Orchestration" max_length="40" name="cmdb_ci_appl_biztalk_orch" type="collection">
+        <element attributes="edge_encryption_enabled=true" label="Discovery Status" max_length="40" name="x_20712_taddm_now_discovery_status" type="string"/>
+    </element>
+</database>

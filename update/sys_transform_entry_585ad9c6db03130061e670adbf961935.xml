@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_transform_entry">
+    <sys_transform_entry action="INSERT_OR_UPDATE">
+        <choice_action>create</choice_action>
+        <coalesce>true</coalesce>
+        <coalesce_case_sensitive>false</coalesce_case_sensitive>
+        <coalesce_empty_fields>false</coalesce_empty_fields>
+        <date_format>yyyy-MM-dd HH:mm:ss</date_format>
+        <map display_value="TADDM CompSys">74915ac9db03130061e670adbf96192e</map>
+        <reference_value_field/>
+        <source_field>[Script]</source_field>
+        <source_script><![CDATA[/*****************************************************
+ *  This script builds the necessary info for identification purposes.
+ *****************************************************/
+var IMPORT_NAME = "TADDM";
+var SOURCE_MSG = "Import transform entry script";
+var ciData = buildCIData();
+var TADDM_CI = IMPORT_NAME + " import CI: " + ciData.getData().name + " (" + source.u_guid + ")";
+
+answer = start();
+
+function start() {
+	
+	//log.info(IMPORT_NAME + " start() start");
+
+	// check whether to use the old ID process or new ID process
+	if (global.JSUtil.toBoolean(gs.getProperty("glide.discovery.use_cmdb_identifiers", "false"))) {
+		// new ID process
+		
+		// If 0 or more matches, continue with normal identification process
+		try {
+			var discoCMDBUtil = new global.DiscoveryCMDBUtil();
+			log.info(IMPORT_NAME + " new discoCMDBUtil");
+			var result = discoCMDBUtil.insertOrUpdate(ciData);
+			log.info(IMPORT_NAME + " insertOrUpdate");
+			if (!result.success)
+				logNoMatch();
+
+			if (result.insert)
+				logInsert();
+			else
+				logUpdate(result.sysId);
+
+			log.info(IMPORT_NAME + " returning");
+			return result.sysId;
+		} 
+		catch(err)
+		{
+			log.info(IMPORT_NAME + " error:" + err.message);
+		}
+	} else {
+		// old ID process
+		log.info(IMPORT_NAME + " old ID process");
+		
+		var CIID = new global.CIIdentification(ciData, log);
+		var idResult = CIID.process();
+
+		if (idResult.explore == true) {
+			if (global.JSUtil.notNil(idResult.sys_id)) {
+				logUpdate(idResult.sys_id);
+				return idResult.sys_id;
+			} else {
+				logInsert();
+				return -1;
+			}
+		} else {
+			// We're here because either we do not have matchable information or we found 
+			// multiple match
+			logNoMatch();
+			return null;
+		}
+	}
+}
+
+function buildCIData() {
+    var ciDataObj = new global.CIData();
+
+    buildBaseData(ciDataObj);
+
+    return ciDataObj;
+}
+
+function buildBaseData(ciDataObj) {
+    var ciData = ciDataObj.getData();
+
+    buildByTransformMap(ciData);
+    buildCustomMapping(ciData);
+}
+
+/*
+ * Automatically populate CI Data with the target fields from the source values based on the transform entries in the transform map
+ */
+function buildByTransformMap(ciData) {
+    var gr = new GlideRecord("sys_transform_entry");
+    gr.addQuery("map", map.sys_id);
+    gr.addQuery("use_source_script", false);
+    gr.query();
+    while (gr.next())
+        ciData[gr.target_field+''] = source[gr.source_field+''];
+}
+
+/*
+ * This allows flexible manipulation of the source data before entering into CI Data 
+ */
+function buildCustomMapping(ciData) {
+
+	ciData['name'] = TADDMHelper.getName(source.u_name, source.u_fqdn);
+    // need this info so we know what class of identifiers to load
+	ciData['sys_class_name'] = TADDMHelper.getComputerClass(source.u_jdoclass);
+}
+
+function logUpdate(matchSysId) {
+	var rec = new global.RecordToHTML(ciData.getData().sys_class_name, matchSysId, ciData.getData().name,  true);
+	log.info(TADDM_CI + " matches [code]" +  rec + "[/code] in the CMDB.", SOURCE_MSG);
+}
+
+function logInsert() {
+	log.info(TADDM_CI + " will have a record created in the CMDB.", SOURCE_MSG);
+}
+
+function logNoMatch() {
+	log.info(TADDM_CI + " will not have a record in the CMDB due to multiple matches or lack of matchable information.", SOURCE_MSG);
+}]]></source_script>
+        <source_table>x_20712_taddm_now_compsys</source_table>
+        <sys_class_name>sys_transform_entry</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-07-03 13:56:27</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>585ad9c6db03130061e670adbf961935</sys_id>
+        <sys_mod_count>12</sys_mod_count>
+        <sys_name>[Script]</sys_name>
+        <sys_package display_value="TADDM Now" source="x_20712_taddm_now">dd9e5530db43130061e670adbf9619b8</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="TADDM Now">dd9e5530db43130061e670adbf9619b8</sys_scope>
+        <sys_update_name>sys_transform_entry_585ad9c6db03130061e670adbf961935</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-07-03 20:42:49</sys_updated_on>
+        <target_field>sys_id</target_field>
+        <target_table>cmdb_ci_server</target_table>
+        <use_source_script>true</use_source_script>
+    </sys_transform_entry>
+</record_update>

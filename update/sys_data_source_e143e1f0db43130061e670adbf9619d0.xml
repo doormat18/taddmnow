@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_data_source">
+    <sys_data_source action="INSERT_OR_UPDATE">
+        <category/>
+        <connection_timeout>0</connection_timeout>
+        <connection_url>jdbc:db2://julie:60007/demo720</connection_url>
+        <connection_url_parameters/>
+        <csv_delimiter/>
+        <database_name>demo720</database_name>
+        <database_port>60007</database_port>
+        <expand_node_children>false</expand_node_children>
+        <file_path/>
+        <file_retrieval_method>Attachment</file_retrieval_method>
+        <format>com.ibm.db2.jcc.DB2Driver</format>
+        <glide_keystore>false</glide_keystore>
+        <header_row>0</header_row>
+        <import_set_table_label>CompSys</import_set_table_label>
+        <import_set_table_name>x_20712_taddm_now_compsys</import_set_table_name>
+        <instance_name/>
+        <jdbc_password>u09Sfed4NAc=</jdbc_password>
+        <jdbc_server>julie</jdbc_server>
+        <jdbc_user_name>db2inst1</jdbc_user_name>
+        <jdbcprobe_result_set_rows/>
+        <jpath_root_node/>
+        <last_run_database_field>LAST_PERSIST_TIME</last_run_database_field>
+        <last_run_datetime>'1529420453548'</last_run_datetime>
+        <ldap_target/>
+        <maximum_rows/>
+        <mid_server display_value="kristina">f09aad7bdbd2030061e670adbf961998</mid_server>
+        <name>TADDM CompSys</name>
+        <oracle_port>1521</oracle_port>
+        <oracle_sid>orcl</oracle_sid>
+        <properties/>
+        <query>Specific SQL</query>
+        <query_timeout>0</query_timeout>
+        <scp_authentication>Username and Password</scp_authentication>
+        <scp_password/>
+        <scp_port/>
+        <scp_server/>
+        <scp_user_name/>
+        <sheet_number>0</sheet_number>
+        <sql_statement>WITH&#13;
+SHORTCSNAME AS (&#13;
+    SELECT&#13;
+        CASE&#13;
+        -- use fqdn for DynamicSystemDomain instead of name&#13;
+        WHEN CS.NAME_C IS NOT NULL AND CS.JDOCLASS_C NOT LIKE '%.DynamicSystemDomainJdo' THEN&#13;
+            CASE&#13;
+                -- DB2 specific&#13;
+                WHEN POSITION('.', CS.NAME_C, CODEUNITS16) &gt; 0&#13;
+                    THEN LEFT(UPPER(CS.NAME_C), POSITION('.', CS.NAME_C, CODEUNITS16) - 1)&#13;
+                ELSE UPPER(CS.NAME_C)&#13;
+            END&#13;
+        WHEN CS.LABEL_C IS NOT NULL THEN&#13;
+            CASE&#13;
+                -- DB2 specific&#13;
+                WHEN POSITION('.', CS.LABEL_C, CODEUNITS16) &gt; 0&#13;
+                    THEN LEFT(UPPER(CS.LABEL_C), POSITION('.', CS.LABEL_C, CODEUNITS16) - 1)&#13;
+                ELSE UPPER(CS.LABEL_C)&#13;
+            END&#13;
+        ELSE&#13;
+            CASE&#13;
+                -- DB2 specific&#13;
+                WHEN POSITION('.', CS.FQDN_C, CODEUNITS16) &gt; 0&#13;
+                    THEN LEFT(UPPER(CS.FQDN_C), POSITION('.', CS.FQDN_C, CODEUNITS16) - 1)&#13;
+                ELSE UPPER(CS.FQDN_C)&#13;
+            END&#13;
+        END AS SHORTCSNAME,&#13;
+        CS.LASTMODIFIEDTIME_C,&#13;
+        CS.GUID_C,&#13;
+        CS.PK_C&#13;
+    FROM&#13;
+       BB_COMPUTERSYSTEM40_V CS&#13;
+       LEFT OUTER JOIN BB_OPERATINGSYSTEM62_V OS ON CS.PK__OSRUNNING_C = OS.PK_C&#13;
+    WHERE&#13;
+        -- make sure Name, FQDN, or Label is available&#13;
+        ((CS.NAME_C IS NOT NULL AND CS.NAME_C &lt;&gt; '') OR&#13;
+        (CS.FQDN_C IS NOT NULL AND CS.FQDN_C &lt;&gt; '') OR&#13;
+        (CS.LABEL_C IS NOT NULL AND CS.LABEL_C &lt;&gt; '')) AND&#13;
+        (CS.TYPE_C NOT IN ('IpDevice', 'MACDevice', 'StorageDevice', 'Module', 'BladeCenter') OR CS.TYPE_C IS NULL) AND&#13;
+        (OS.OSCONFIDENCE_C = 100 OR OS.OSCONFIDENCE_C IS NULL) AND&#13;
+        -- excludes Cisco UCS fabric interconnect&#13;
+        (OS.NAME_C != 'NX-OS' OR OS.NAME_C IS NULL) AND&#13;
+        CS.JDOCLASS_C NOT LIKE '%.LPARJdo' AND&#13;
+        CS.JDOCLASS_C NOT LIKE '%.ZVMGuestJdo' AND&#13;
+        --CS.JDOCLASS_C NOT LIKE '%.ZSeriesComputerSystemJdo' AND&#13;
+        CS.JDOCLASS_C NOT LIKE '%.storage.%' AND&#13;
+        -- exclude network devices, handled in separate query&#13;
+        (CS.TYPE_C NOT IN ( 'Firewall', 'LoadBalancer', 'Router', 'Bridge', 'WLC', 'NetScaler', 'Printer', 'SSM' ) OR CS.TYPE_C IS NULL)&#13;
+),&#13;
+NEWESTCSNAME AS (&#13;
+    SELECT&#13;
+        SHORTCSNAME,&#13;
+        MAX(LASTMODIFIEDTIME_C) AS LASTMODIFIEDTIME_C&#13;
+    FROM&#13;
+        SHORTCSNAME COMPSYS&#13;
+    GROUP BY&#13;
+        SHORTCSNAME&#13;
+),&#13;
+NEWESTCSIDS AS (&#13;
+    SELECT&#13;
+        SHORTCSNAME.GUID_C,&#13;
+        SHORTCSNAME.PK_C&#13;
+    FROM&#13;
+        SHORTCSNAME&#13;
+        JOIN NEWESTCSNAME ON (SHORTCSNAME.SHORTCSNAME = NEWESTCSNAME.SHORTCSNAME&#13;
+                              AND SHORTCSNAME.LASTMODIFIEDTIME_C = NEWESTCSNAME.LASTMODIFIEDTIME_C)&#13;
+),&#13;
+ZPROC AS (&#13;
+    SELECT&#13;
+        CS.PK_C AS PK,&#13;
+        CS.PROCESSWEIGHT_C AS PROCESSWEIGHT,&#13;
+        CS.PROCESSINGCAPACITY_C AS PROCESSINGCAPACITY,&#13;
+        CASE &#13;
+            WHEN CS.PROCESSCAPACITYUNITS_C = 0 THEN 'Unknown'&#13;
+            WHEN CS.PROCESSCAPACITYUNITS_C = 1 THEN 'Other'&#13;
+            WHEN CS.PROCESSCAPACITYUNITS_C = 2 THEN 'SPECInt'&#13;
+            WHEN CS.PROCESSCAPACITYUNITS_C = 3 THEN 'MSU'&#13;
+            ELSE NULL&#13;
+        END AS PROCESSCAPACITYUNITS&#13;
+    FROM&#13;
+        BB_ZSERIESCOMPUTERSYSTEM25_V CS&#13;
+    WHERE&#13;
+        CS.JDOCLASS_C NOT LIKE '%.LPARJdo' AND&#13;
+        CS.JDOCLASS_C NOT LIKE '%.ZVMGuestJdo'&#13;
+),&#13;
+FILESYSTEMS AS (&#13;
+	SELECT&#13;
+		CS.PK_C,&#13;
+		SUM(FS.CAPACITY_C) AS FILESYSTEM_CAPACITY&#13;
+	FROM&#13;
+		BB_COMPUTERSYSTEM40_V CS&#13;
+ 		LEFT OUTER JOIN BB_FILESYSTEM71_V FS ON FS.PK__PARENTFILESYSTEM_C = CS.PK_C&#13;
+ 	GROUP BY&#13;
+ 		CS.PK_C&#13;
+),&#13;
+CPUS AS (&#13;
+    SELECT&#13;
+        CS.PK_C,&#13;
+        --CPU.INDEXORDER_C,&#13;
+        -- ComputerSystem.CPUType provides same&#13;
+        --MAX(CPU.cputype_c) AS CPU_TYPE,&#13;
+        --SUM(CPU.CPUCORESINSTALLED_C) AS CPUCORESINSTALLED, -- not reliably populated&#13;
+        COUNT(*) AS CPUCOUNT,&#13;
+        -- more reliably set on ComputerSystem&#13;
+        --MAX(CPU.CPUSPEED_C) AS CPU_SPEED,&#13;
+        SUM(CPU.NUMCPUS_C) AS CORECOUNT&#13;
+    FROM&#13;
+        BB_COMPUTERSYSTEM40_V CS&#13;
+        JOIN BB_COMPUTERSYSTEMJDO_CPU_J CS_CPU ON CS.pk_c = CS_CPU.PK__JDOID_C&#13;
+        JOIN BB_CPU10_V CPU ON CS_CPU.PK__CPU_C = CPU.PK_C&#13;
+    GROUP BY&#13;
+        CS.PK_C&#13;
+),&#13;
+-- ComputerSystems with a single IP address&#13;
+SINGLEIPCS AS (&#13;
+    SELECT &#13;
+        CS.PK_C AS PK_C&#13;
+        --,COUNT(CS.PK_C) AS CS_COUNT&#13;
+    FROM&#13;
+        BB_COMPUTERSYSTEM40_V CS&#13;
+        JOIN BB_IPINTERFACE96_V IPINT ON IPINT.PK__PARENTIPINTERFACE_C = CS.PK_C&#13;
+        JOIN BB_IPADDRESS73_V IP ON IPINT.PK__IPADDRESS_C = IP.PK_C&#13;
+     WHERE IP.STRINGNOTATION_C NOT IN ( '127.0.0.1', '1.1.1.1', '0.0.0.0' )&#13;
+         AND IP.STRINGNOTATION_C NOT LIKE '%:%' -- v4 IP only&#13;
+     GROUP BY CS.PK_C&#13;
+     HAVING COUNT(CS.PK_C) = 1&#13;
+),&#13;
+-- mapping of CS to single IP address&#13;
+SINGLEIPS AS (&#13;
+    SELECT &#13;
+        CS.PK_C AS CS_PK,&#13;
+        IP.STRINGNOTATION_C AS STRINGNOTATION&#13;
+    FROM&#13;
+        SINGLEIPCS CS&#13;
+        JOIN BB_IPINTERFACE96_V IPINT ON IPINT.PK__PARENTIPINTERFACE_C = CS.PK_C&#13;
+        JOIN BB_IPADDRESS73_V IP ON IPINT.PK__IPADDRESS_C = IP.PK_C&#13;
+     WHERE IP.STRINGNOTATION_C NOT IN ( '127.0.0.1', '1.1.1.1', '0.0.0.0' )&#13;
+         AND IP.STRINGNOTATION_C NOT LIKE '%:%' -- v4 IP only&#13;
+),&#13;
+-- IP stack where IP/fqdn exists that matches server fqdn&#13;
+IPINT AS (&#13;
+    SELECT &#13;
+        CS.PK_C AS CS_PK,&#13;
+        IPINT.PK_C AS IPINT_PK,&#13;
+        IPINT.LASTMODIFIEDTIME_C AS IPINT_LMT,&#13;
+        IP.STRINGNOTATION_C AS STRINGNOTATION, &#13;
+        FQDNS.FQDN_C AS FQDN&#13;
+    FROM&#13;
+        BB_COMPUTERSYSTEM40_V CS&#13;
+        JOIN BB_IPINTERFACE96_V IPINT ON IPINT.PK__PARENTIPINTERFACE_C = CS.PK_C&#13;
+        JOIN BB_IPADDRESS73_V IP ON IPINT.PK__IPADDRESS_C = IP.PK_C&#13;
+        JOIN BB_IPADDRESSJDO_FQDNS_J IP_FQDNS ON IP.PK_C = IP_FQDNS.PK__JDOID_C&#13;
+        JOIN BB_FQDN31_V FQDNS ON (FQDNS.PK_C = IP_FQDNS.PK__FQDNS_C AND CS.FQDN_C = FQDNS.FQDN_C)&#13;
+),&#13;
+-- grab the newest IpInterface if there are multiple with same fqdn&#13;
+NEWESTIPINT AS (&#13;
+    SELECT&#13;
+        FQDN,&#13;
+        MAX(IPINT_LMT) AS IPINT_LMT&#13;
+    FROM&#13;
+        IPINT&#13;
+    GROUP BY&#13;
+        CS_PK, FQDN&#13;
+),&#13;
+-- get IP address for server with matching fqdn&#13;
+IPS AS (&#13;
+    SELECT&#13;
+        IPINT.CS_PK,&#13;
+        IPINT.STRINGNOTATION&#13;
+    FROM&#13;
+       IPINT JOIN NEWESTIPINT ON ( IPINT.FQDN = NEWESTIPINT.FQDN AND IPINT.IPINT_LMT = NEWESTIPINT.IPINT_LMT )&#13;
+),&#13;
+-- IP that matches server contextIp&#13;
+CONTEXTIP AS (&#13;
+    SELECT &#13;
+        CS.PK_C AS CS_PK,&#13;
+        IP.STRINGNOTATION_C AS STRINGNOTATION &#13;
+    FROM&#13;
+        BB_COMPUTERSYSTEM40_V CS&#13;
+        JOIN BB_IPINTERFACE96_V IPINT ON IPINT.PK__PARENTIPINTERFACE_C = CS.PK_C&#13;
+        JOIN BB_IPADDRESS73_V IP ON IPINT.PK__IPADDRESS_C = IP.PK_C&#13;
+    WHERE&#13;
+        IP.STRINGNOTATION_C = CS.CONTEXTIP_C&#13;
+),&#13;
+CHANGES AS (&#13;
+	SELECT&#13;
+		OBJECT_ID AS GUID, &#13;
+		MAX(PERSIST_TIME) AS LAST_PERSIST_TIME&#13;
+	FROM CHANGE_HISTORY_TABLE&#13;
+	WHERE &#13;
+		ACTUAL_CHANGE_TYPE != 1 -- any change other than deleted&#13;
+		AND&#13;
+		(&#13;
+		   CLASS_NAME LIKE '%ComputerSystem' OR CLASS_NAME LIKE '%.Appliance'&#13;
+		)&#13;
+	GROUP BY OBJECT_ID&#13;
+)&#13;
+SELECT * FROM (&#13;
+SELECT&#13;
+ REPLACE(REPLACE(CS.JDOCLASS_C, 'com.collation.topomgr.jdo.topology.', ''), 'Jdo', '') AS JDOCLASS,&#13;
+ CS.GUID_C AS GUID,&#13;
+ CS.NAME_C AS NAME,&#13;
+ CS.LABEL_C AS LABEL,&#13;
+ CS.FQDN_C AS FQDN,&#13;
+ CS.LASTMODIFIEDTIME_C AS LASTMODIFIEDTIME,&#13;
+ CS.MODEL_C AS MODEL,&#13;
+ CS.MANUFACTURER_C AS MANUFACTURER,&#13;
+ CS.SERIALNUMBER_C AS SERIALNUMBER,&#13;
+ CS.VIRTUAL_C AS VIRTUAL,&#13;
+ CS.MEMORYSIZE_C AS MEMORYSIZE,&#13;
+ CS.CPUTYPE_C AS CPUTYPE,&#13;
+ CS.CPUCORESENABLED_C AS CPUCORESENABLED,&#13;
+ CASE WHEN CS.CPUCORESINSTALLED_C IS NULL THEN CPU.CORECOUNT&#13;
+  ELSE CS.CPUCORESINSTALLED_C&#13;
+ END AS CPUCORESINSTALLED,&#13;
+ CS.CPUDIESENABLED_C AS CPUDIESENABLED,&#13;
+ CS.CPUDIESINSTALLED_C AS CPUDIESINSTALLED,&#13;
+ CS.ARCHITECTURE_C AS ARCHITECTURE,&#13;
+ CASE WHEN CS.JDOCLASS_C LIKE '%ZSeriesComputerSystemJdo' THEN 'zOS'&#13;
+  ELSE OS.OSNAME_C&#13;
+ END AS OSNAME,&#13;
+ CASE WHEN OS.OSVERSION_C IS NULL THEN OS.VERSIONSTRING_C&#13;
+  ELSE OS.OSVERSION_C&#13;
+ END AS OSVERSION,&#13;
+ OS.SERVICEPACK_C AS SERVICEPACK,&#13;
+ CS.CPUSPEED_C AS CPUSPEED,&#13;
+ CASE WHEN CS.NUMCPUS_C IS NULL THEN CPU.CPUCOUNT&#13;
+  ELSE CS.NUMCPUS_C&#13;
+ END AS NUMCPUS,&#13;
+ CS.LOCATIONTAG_C AS LOCATION,&#13;
+ PROCESSWEIGHT,&#13;
+ PROCESSINGCAPACITY,&#13;
+ PROCESSCAPACITYUNITS,&#13;
+ FS.FILESYSTEM_CAPACITY AS FILESYSTEM_CAPACITY,&#13;
+ CS.VMID_C AS VMID,&#13;
+ OS.KERNELVERSION_C as KERNELVERSION,&#13;
+ CS.TYPE_C AS TYPE,&#13;
+ -- use either IP with fqdn that matches CS fqdn or single IP&#13;
+ CASE &#13;
+  WHEN IPS.STRINGNOTATION IS NOT NULL THEN IPS.STRINGNOTATION&#13;
+  WHEN SINGLEIPS.STRINGNOTATION IS NOT NULL THEN SINGLEIPS.STRINGNOTATION&#13;
+  WHEN CONTEXTIP.STRINGNOTATION IS NOT NULL THEN CONTEXTIP.STRINGNOTATION&#13;
+  ELSE NULL&#13;
+ END AS IPADDRESS,&#13;
+ NVL(CHANGES.LAST_PERSIST_TIME, 0) AS LAST_PERSIST_TIME&#13;
+FROM&#13;
+ (BB_COMPUTERSYSTEM40_V CS&#13;
+    JOIN NEWESTCSIDS ON CS.PK_C = NEWESTCSIDS.PK_C)&#13;
+ LEFT OUTER JOIN BB_OPERATINGSYSTEM62_V OS ON CS.PK__OSRUNNING_C = OS.PK_C&#13;
+ LEFT OUTER JOIN FILESYSTEMS FS ON FS.PK_C = CS.PK_C&#13;
+ LEFT OUTER JOIN CPUS CPU ON CPU.PK_C = CS.PK_C&#13;
+ LEFT OUTER JOIN ZPROC ON ZPROC.PK = CS.PK_C&#13;
+ LEFT OUTER JOIN IPS ON IPS.CS_PK = CS.PK_C&#13;
+ LEFT OUTER JOIN SINGLEIPS ON SINGLEIPS.CS_PK = CS.PK_C&#13;
+ LEFT OUTER JOIN CONTEXTIP ON CONTEXTIP.CS_PK = CS.PK_C&#13;
+ LEFT OUTER JOIN CHANGES ON CS.GUID_C = CHANGES.GUID&#13;
+-- need order asc so that last discovered is processed last in case of duplicates&#13;
+ORDER BY LASTMODIFIEDTIME, GUID&#13;
+)&#13;
+-- WHERE clause needed so SN can add dynamic "&#13;
+WHERE 1 = 1</sql_statement>
+        <ssh_keyfile_path/>
+        <sys_class_name>sys_data_source</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2018-06-29 16:50:47</sys_created_on>
+        <sys_customer_update>false</sys_customer_update>
+        <sys_id>e143e1f0db43130061e670adbf9619d0</sys_id>
+        <sys_mod_count>8</sys_mod_count>
+        <sys_name>TADDM CompSys</sys_name>
+        <sys_package display_value="TADDM Now" source="x_20712_taddm_now">dd9e5530db43130061e670adbf9619b8</sys_package>
+        <sys_policy/>
+        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
+        <sys_scope display_value="TADDM Now">dd9e5530db43130061e670adbf9619b8</sys_scope>
+        <sys_update_name>sys_data_source_e143e1f0db43130061e670adbf9619d0</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2018-07-03 19:26:43</sys_updated_on>
+        <table_name/>
+        <type>JDBC</type>
+        <use_integrated_authentication>false</use_integrated_authentication>
+        <use_last_run_datetime>true</use_last_run_datetime>
+        <xpath_root_node/>
+        <zipped>false</zipped>
+    </sys_data_source>
+</record_update>

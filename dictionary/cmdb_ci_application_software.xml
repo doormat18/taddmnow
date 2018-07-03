@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element extends="cmdb_ci_spkg" label="Application Software" max_length="40" name="cmdb_ci_application_software" type="collection">
+        <element attributes="edge_encryption_enabled=true" label="Discovery Status" max_length="40" name="x_20712_taddm_now_discovery_status" type="string"/>
+    </element>
+</database>

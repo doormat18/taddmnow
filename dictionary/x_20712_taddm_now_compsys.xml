@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<database>
+    <element extends="sys_import_set_row" label="TADDM CompSys" max_length="40" name="x_20712_taddm_now_compsys" type="collection">
+        <element attributes="import_attribute_name=ARCHITECTURE,edge_encryption_enabled=true" label="ARCHITECTURE" max_length="192" name="u_architecture" type="string"/>
+        <element attributes="import_attribute_name=CPUCORESENABLED" label="CPUCORESENABLED" max_length="40" name="u_cpucoresenabled" type="integer"/>
+        <element attributes="import_attribute_name=CPUCORESINSTALLED" label="CPUCORESINSTALLED" max_length="40" name="u_cpucoresinstalled" type="integer"/>
+        <element attributes="import_attribute_name=CPUDIESENABLED" label="CPUDIESENABLED" max_length="40" name="u_cpudiesenabled" type="integer"/>
+        <element attributes="import_attribute_name=CPUDIESINSTALLED" label="CPUDIESINSTALLED" max_length="40" name="u_cpudiesinstalled" type="integer"/>
+        <element attributes="import_attribute_name=CPUSPEED" label="CPUSPEED" max_length="40" name="u_cpuspeed" type="long"/>
+        <element attributes="import_attribute_name=CPUTYPE,edge_encryption_enabled=true" label="CPUTYPE" max_length="192" name="u_cputype" type="string"/>
+        <element attributes="import_attribute_name=FILESYSTEM_CAPACITY" label="FILESYSTEM_CAPACITY" max_length="40" name="u_filesystem_capacity" type="long"/>
+        <element attributes="import_attribute_name=FQDN,edge_encryption_enabled=true" label="FQDN" max_length="192" name="u_fqdn" type="string"/>
+        <element attributes="import_attribute_name=GUID,edge_encryption_enabled=true" label="GUID" max_length="192" name="u_guid" type="string"/>
+        <element attributes="import_attribute_name=IPADDRESS,edge_encryption_enabled=true" label="IPADDRESS" max_length="192" name="u_ipaddress" type="string"/>
+        <element attributes="import_attribute_name=JDOCLASS,edge_encryption_enabled=true" label="JDOCLASS" max_length="192" name="u_jdoclass" type="string"/>
+        <element attributes="import_attribute_name=KERNELVERSION,edge_encryption_enabled=true" label="KERNELVERSION" max_length="192" name="u_kernelversion" type="string"/>
+        <element attributes="import_attribute_name=LABEL,edge_encryption_enabled=true" label="LABEL" max_length="192" name="u_label" type="string"/>
+        <element attributes="import_attribute_name=LASTMODIFIEDTIME" label="LASTMODIFIEDTIME" max_length="40" name="u_lastmodifiedtime" type="long"/>
+        <element attributes="import_attribute_name=LAST_PERSIST_TIME" label="LAST_PERSIST_TIME" max_length="40" name="u_last_persist_time" type="long"/>
+        <element attributes="import_attribute_name=LOCATION,edge_encryption_enabled=true" label="LOCATION" max_length="192" name="u_location" type="string"/>
+        <element attributes="import_attribute_name=MANUFACTURER,edge_encryption_enabled=true" label="MANUFACTURER" max_length="192" name="u_manufacturer" type="string"/>
+        <element attributes="import_attribute_name=MEMORYSIZE" label="MEMORYSIZE" max_length="40" name="u_memorysize" type="long"/>
+        <element attributes="import_attribute_name=MODEL,edge_encryption_enabled=true" label="MODEL" max_length="192" name="u_model" type="string"/>
+        <element attributes="import_attribute_name=NAME,edge_encryption_enabled=true" label="NAME" max_length="192" name="u_name" type="string"/>
+        <element attributes="import_attribute_name=NUMCPUS" label="NUMCPUS" max_length="40" name="u_numcpus" type="integer"/>
+        <element attributes="import_attribute_name=OSNAME,edge_encryption_enabled=true" label="OSNAME" max_length="192" name="u_osname" type="string"/>
+        <element attributes="import_attribute_name=OSVERSION,edge_encryption_enabled=true" label="OSVERSION" max_length="192" name="u_osversion" type="string"/>
+        <element attributes="import_attribute_name=PROCESSCAPACITYUNITS,edge_encryption_enabled=true" label="PROCESSCAPACITYUNITS" max_length="40" name="u_processcapacityunits" type="string"/>
+        <element attributes="import_attribute_name=PROCESSINGCAPACITY" label="PROCESSINGCAPACITY" max_length="40" name="u_processingcapacity" type="UNKNOWN"/>
+        <element attributes="import_attribute_name=PROCESSWEIGHT" label="PROCESSWEIGHT" max_length="40" name="u_processweight" type="integer"/>
+        <element attributes="import_attribute_name=SERIALNUMBER,edge_encryption_enabled=true" label="SERIALNUMBER" max_length="192" name="u_serialnumber" type="string"/>
+        <element attributes="import_attribute_name=SERVICEPACK,edge_encryption_enabled=true" label="SERVICEPACK" max_length="192" name="u_servicepack" type="string"/>
+        <element attributes="import_attribute_name=TYPE,edge_encryption_enabled=true" label="TYPE" max_length="192" name="u_type" type="string"/>
+        <element attributes="import_attribute_name=VIRTUAL" label="VIRTUAL" max_length="40" name="u_virtual" type="integer"/>
+        <element attributes="import_attribute_name=VMID,edge_encryption_enabled=true" label="VMID" max_length="192" name="u_vmid" type="string"/>
+    </element>
+</database>

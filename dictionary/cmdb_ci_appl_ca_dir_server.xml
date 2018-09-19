@@ -2,5 +2,6 @@
 <database>
     <element audit="true" extends="cmdb_ci_infra_service" label="CA eTrust Directory Server" max_length="40" name="cmdb_ci_appl_ca_dir_server" type="collection">
         <element attributes="edge_encryption_enabled=true" label="Discovery Status" max_length="40" name="x_20712_taddm_now_discovery_status" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="TADDM GUID" max_length="32" name="x_20712_taddm_now_taddm_guid" type="string"/>
     </element>
 </database>

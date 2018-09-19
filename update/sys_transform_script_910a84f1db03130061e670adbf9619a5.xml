@@ -10,6 +10,22 @@ var TADDM_CI = IMPORT_NAME + " import CI: " + source.u_name + " (" + source.u_gu
 
 ignore = (function runTransformScript(source, map, log, target, isInsert, isUpdate) {
 	
+	var sguid = source.u_guid.toString();
+	var tguid = target.x_20712_taddm_now_taddm_guid.toString();
+	if (!TADDMHelper.nil(sguid) && !TADDMHelper.nil(tguid) && (sguid != tguid))
+	{
+		/*
+		 * Note: This is evidence that there might be duplicates in TADDM and requires further investigation.
+		 *  In this case, the first CI in to CMDB wins. If duplicates are resolved in TADDM and this causes
+		 *  the guid to change, the guid in the CMDB must be changed manually to match TADDM and this will
+		 *  allow the data in CMDB to be updated.
+		 */
+		var msg = TADDM_CI + " will not have a record in the CMDB due to mismatched source/target guids: ";
+		msg = msg + sguid + "!=" + tguid;
+		TADDMHelper.logInfo(log, msg);
+		return true;
+	}
+	
 	//
 	// MANDATORY FIELD CHECK
 	//
@@ -129,14 +145,14 @@ function getRetiredDate(gr) {
 }
 
 function logIgnore() {
-	log.info(TADDM_CI + " will not have a record in the CMDB due to stale data.", SOURCE_MSG);
+	log.info("[" + (new GlideDateTime()).getNumericValue() + "] " + TADDM_CI + " will not have a record in the CMDB due to stale data.");
 }]]></script>
         <sys_class_name>sys_transform_script</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2018-07-02 12:47:24</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>910a84f1db03130061e670adbf9619a5</sys_id>
-        <sys_mod_count>0</sys_mod_count>
+        <sys_mod_count>9</sys_mod_count>
         <sys_name>onBefore</sys_name>
         <sys_package display_value="TADDM Now" source="x_20712_taddm_now">dd9e5530db43130061e670adbf9619b8</sys_package>
         <sys_policy/>
@@ -144,7 +160,7 @@ function logIgnore() {
         <sys_scope display_value="TADDM Now">dd9e5530db43130061e670adbf9619b8</sys_scope>
         <sys_update_name>sys_transform_script_910a84f1db03130061e670adbf9619a5</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-07-02 12:47:24</sys_updated_on>
+        <sys_updated_on>2018-09-19 15:14:21</sys_updated_on>
         <when>onBefore</when>
     </sys_transform_script>
 </record_update>

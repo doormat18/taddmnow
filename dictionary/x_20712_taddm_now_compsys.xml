@@ -8,9 +8,11 @@
         <element attributes="import_attribute_name=CPUDIESINSTALLED" label="CPUDIESINSTALLED" max_length="40" name="u_cpudiesinstalled" type="integer"/>
         <element attributes="import_attribute_name=CPUSPEED" label="CPUSPEED" max_length="40" name="u_cpuspeed" type="long"/>
         <element attributes="import_attribute_name=CPUTYPE,edge_encryption_enabled=true" label="CPUTYPE" max_length="192" name="u_cputype" type="string"/>
+        <element label="DELETED" max_length="40" name="u_deleted" type="string"/>
         <element attributes="import_attribute_name=FILESYSTEM_CAPACITY" label="FILESYSTEM_CAPACITY" max_length="40" name="u_filesystem_capacity" type="long"/>
         <element attributes="import_attribute_name=FQDN,edge_encryption_enabled=true" label="FQDN" max_length="192" name="u_fqdn" type="string"/>
         <element attributes="import_attribute_name=GUID,edge_encryption_enabled=true" label="GUID" max_length="192" name="u_guid" type="string"/>
+        <element attributes="edge_encryption_enabled=true" label="HOSTSYS_JDOCLASS" max_length="192" name="u_hostsys_jdoclass" type="string"/>
         <element attributes="import_attribute_name=IPADDRESS,edge_encryption_enabled=true" label="IPADDRESS" max_length="192" name="u_ipaddress" type="string"/>
         <element attributes="import_attribute_name=JDOCLASS,edge_encryption_enabled=true" label="JDOCLASS" max_length="192" name="u_jdoclass" type="string"/>
         <element attributes="import_attribute_name=KERNELVERSION,edge_encryption_enabled=true" label="KERNELVERSION" max_length="192" name="u_kernelversion" type="string"/>

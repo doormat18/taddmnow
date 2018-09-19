@@ -12,6 +12,63 @@
  */
 var TADDMHelper = Class.create();
 
+/**
+ * Check for nil value
+ */
+TADDMHelper.nil = function(item)
+{
+    return (item == null) || (typeof item == 'undefined') || ('' == '' + item);
+};
+
+/**
+ * Log INFO message with timestamp prefix
+ */
+TADDMHelper.logInfo = function(log, msg)
+{
+	log.info("[" + (new GlideDateTime()).getNumericValue() + "] " + msg);
+};
+
+/**
+ * Uses serial, vmid, ServiceNow class, and hostSystem JDO class to calculate unique serial
+ */
+TADDMHelper.calculateSerial = function(serial, vmid, snclass, hostsysjdoclass) {
+	
+	if (serial == null || serial == '')
+		return null;
+	
+	// if it's a mainframe or aix lpar, then include vmid in serial
+	if ((
+			snclass === 'cmdb_ci_mainframe_lpar' || 
+			snclass === 'cmdb_ci_aix_server' || 
+			hostsysjdoclass === 'sys.SystemPComputerSystem' 
+		) && 
+		vmid != '' )
+	{
+		serial = serial + ';vmid=' + vmid;
+	}
+	return serial;
+};
+
+/**
+ * Expects source to contain u_name, u_fqdn, u_label, u_jdoclass attributes
+ */
+TADDMHelper.getComputerName = function(source) {
+	
+	var name = this.getName(source.u_name.toString(), source.u_fqdn.toString());
+
+	var label = source.u_label.toString();
+	var cClass = this.getComputerClass(source.u_jdoclass.toString());
+
+	if (cClass === 'cmdb_ci_mainframe_lpar' && label != '')
+	{
+		// if mainframe LPAR, use label instead of name
+		return label;
+	}
+	
+	return name;
+};
+
+// deprecated, use getComputerName(source)
 TADDMHelper.getName = function(name, fqdn) {
 	
 	var hn = new global.HostnameJS();
@@ -128,7 +185,7 @@ TADDMHelper.getComputerClass = function(jdoclass) {
 	if ( jdoclass.match(/ZSeriesComputerSystem/i) != null ){
 		return "cmdb_ci_mainframe";
 	} else
-	if ( jdoclass.match(/sys.zOS.LPAR/i) != null ){
+	if ( jdoclass.match(/sys.zOS.LPAR/i) != null || jdoclass.match(/sys.zOS.ZVMGuest/i) != null ){
 		return "cmdb_ci_mainframe_lpar";
 	}
 	else {
@@ -147,7 +204,7 @@ TADDMHelper.prototype = {
         <sys_created_on>2018-07-02 12:45:13</sys_created_on>
         <sys_customer_update>false</sys_customer_update>
         <sys_id>18894cf1db03130061e670adbf9619a9</sys_id>
-        <sys_mod_count>3</sys_mod_count>
+        <sys_mod_count>11</sys_mod_count>
         <sys_name>TADDMHelper</sys_name>
         <sys_package display_value="TADDM Now" source="x_20712_taddm_now">dd9e5530db43130061e670adbf9619b8</sys_package>
         <sys_policy>read</sys_policy>
@@ -155,6 +212,6 @@ TADDMHelper.prototype = {
         <sys_scope display_value="TADDM Now">dd9e5530db43130061e670adbf9619b8</sys_scope>
         <sys_update_name>sys_script_include_18894cf1db03130061e670adbf9619a9</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-07-03 13:51:40</sys_updated_on>
+        <sys_updated_on>2018-09-19 15:03:45</sys_updated_on>
     </sys_script_include>
 </record_update>

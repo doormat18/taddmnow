@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update table="sys_wizard_answer">
+    <sys_wizard_answer action="INSERT_OR_UPDATE">
+        <active>true</active>
+        <answer>Mainframe Terminal</answer>
+        <button_label/>
+        <dependent_value/>
+        <element/>
+        <name>Mainframe Terminal</name>
+        <next_question/>
+        <order>100</order>
+        <payload_name/>
+        <question display_value="Base Configuration Item" name="Base Configuration Item">561429f49902130059a648f6b99797ca</question>
+        <roles/>
+        <script/>
+        <sys_class_name>sys_wizard_answer</sys_class_name>
+        <sys_created_by>system</sys_created_by>
+        <sys_created_on>2018-09-21 20:32:53</sys_created_on>
+        <sys_id>7a8db67bdb20230061e670adbf96193d</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Mainframe Terminal</sys_name>
+        <sys_package display_value="TADDM Now" source="x_20712_taddm_now">dd9e5530db43130061e670adbf9619b8</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="TADDM Now">dd9e5530db43130061e670adbf9619b8</sys_scope>
+        <sys_update_name>sys_wizard_answer_7a8db67bdb20230061e670adbf96193d</sys_update_name>
+        <sys_updated_by>system</sys_updated_by>
+        <sys_updated_on>2018-09-21 20:32:53</sys_updated_on>
+        <table/>
+        <target_url>cmdb_ci_terminal_mainframe.do</target_url>
+        <type>1</type>
+    </sys_wizard_answer>
+</record_update>

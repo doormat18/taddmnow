@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+    <sys_documentation element="config_directory" label="Configuration directory" language="en" table="u_cmdb_ci_app_server_sms">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>config_directory</element>
+            <help/>
+            <hint/>
+            <label>Configuration directory</label>
+            <language>en</language>
+            <name>u_cmdb_ci_app_server_sms</name>
+            <plural>Configuration directories</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>system</sys_created_by>
+            <sys_created_on>2018-09-21 20:30:00</sys_created_on>
+            <sys_id>2cecf23bdb20230061e670adbf9619a4</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Configuration directory</sys_name>
+            <sys_package display_value="TADDM Now" source="x_20712_taddm_now">dd9e5530db43130061e670adbf9619b8</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="TADDM Now">dd9e5530db43130061e670adbf9619b8</sys_scope>
+            <sys_update_name>sys_documentation_u_cmdb_ci_app_server_sms_config_directory_en</sys_update_name>
+            <sys_updated_by>system</sys_updated_by>
+            <sys_updated_on>2018-09-21 20:30:00</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>

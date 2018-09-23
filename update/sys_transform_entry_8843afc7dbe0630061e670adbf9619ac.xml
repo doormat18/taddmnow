@@ -10,30 +10,24 @@
         <reference_value_field/>
         <source_field>[Script]</source_field>
         <source_script><![CDATA[answer = (function transformEntry(source) {
-	log.info("here1");
 	var lastmod = parseFloat(source.u_lastmodifiedtime.toString());
-	log.info("here2");
 	var gdt = new GlideDateTime();
-	log.info("here3");
 	gdt.setValue(lastmod);
-	log.info("here4");
 	return gdt.getValue();
 })(source);]]></source_script>
         <source_table>x_20712_taddm_now_compsys</source_table>
         <sys_class_name>sys_transform_entry</sys_class_name>
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2018-09-19 15:23:03</sys_created_on>
-        <sys_customer_update>false</sys_customer_update>
         <sys_id>8843afc7dbe0630061e670adbf9619ac</sys_id>
-        <sys_mod_count>2</sys_mod_count>
+        <sys_mod_count>3</sys_mod_count>
         <sys_name>[Script]</sys_name>
         <sys_package display_value="TADDM Now" source="x_20712_taddm_now">dd9e5530db43130061e670adbf9619b8</sys_package>
         <sys_policy/>
-        <sys_replace_on_upgrade>false</sys_replace_on_upgrade>
         <sys_scope display_value="TADDM Now">dd9e5530db43130061e670adbf9619b8</sys_scope>
         <sys_update_name>sys_transform_entry_8843afc7dbe0630061e670adbf9619ac</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-09-19 19:21:35</sys_updated_on>
+        <sys_updated_on>2018-09-23 14:30:17</sys_updated_on>
         <target_field>last_discovered</target_field>
         <target_table>cmdb_ci_server</target_table>
         <use_source_script>true</use_source_script>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<record_update>
+    <sys_documentation element="object_id" label="Object ID" language="en" table="cmdb_ci_terminal_mainframe">
+        <sys_documentation action="INSERT_OR_UPDATE">
+            <element>object_id</element>
+            <help/>
+            <hint/>
+            <label>Object ID</label>
+            <language>en</language>
+            <name>cmdb_ci_terminal_mainframe</name>
+            <plural>Object IDs</plural>
+            <sys_class_name>sys_documentation</sys_class_name>
+            <sys_created_by>system</sys_created_by>
+            <sys_created_on>2018-09-21 20:33:02</sys_created_on>
+            <sys_id>4d9df67bdb20230061e670adbf961921</sys_id>
+            <sys_mod_count>0</sys_mod_count>
+            <sys_name>Object ID</sys_name>
+            <sys_package display_value="TADDM Now" source="x_20712_taddm_now">dd9e5530db43130061e670adbf9619b8</sys_package>
+            <sys_policy/>
+            <sys_scope display_value="TADDM Now">dd9e5530db43130061e670adbf9619b8</sys_scope>
+            <sys_update_name>sys_documentation_cmdb_ci_terminal_mainframe_object_id_en</sys_update_name>
+            <sys_updated_by>system</sys_updated_by>
+            <sys_updated_on>2018-09-21 20:33:02</sys_updated_on>
+            <url/>
+            <url_target/>
+        </sys_documentation>
+    </sys_documentation>
+</record_update>

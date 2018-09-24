@@ -13,6 +13,82 @@
 var TADDMHelper = Class.create();
 
 /**
+ * Return host name from fqdn
+ */
+TADDMHelper.getHostName = function(fqdn)
+{
+	// nothing to parse
+	if (gs.nil(fqdn))
+		return null;
+	
+	// if a space occurs, can't parse
+	if (fqdn.indexOf(" ") > -1)
+		return null;
+			
+    // if set to IP address, can't parse
+	var ipRegex = new RegExp("^([0-9]{1,3}\\.){3}[0-9]{1,3}$");
+	var ipGroups = ipRegex.exec(fqdn);
+	if (!gs.nil(ipGroups))
+		return null;
+
+	// parse with regex
+	try {
+		var regex = gs.getProperty('glide.discovery.fqdn.regex', "^([^.]+)\\.((?:[^.]+\\.)+[^.]+)$");
+		var fqdnRegex = new RegExp(regex);
+		var groups = fqdnRegex.exec(fqdn);
+		if (!gs.nil(groups) && groups.length == 3)
+		{
+			return groups[1];
+		}
+		else
+		{
+			// fqdn is just hostname
+			return fqdn;
+		}
+	} catch (e) {
+		gs.log("FQDN parsing failed. The regex '" + regexStr + "' was not able to parse '" + fqdn + "'. The error is " + e.message, "warning");
+	}
+};
+
+/**
+ * Return DNS domain name from fqdn
+ */
+TADDMHelper.getDomainName = function(fqdn)
+{
+	// nothing to parse
+	if (gs.nil(fqdn))
+		return null;
+	
+	// if a space occurs, can't parse
+	if (fqdn.indexOf(" ") > -1)
+		return null;
+			
+    // if set to IP address, can't parse
+	var ipRegex = new RegExp("^([0-9]{1,3}\\.){3}[0-9]{1,3}$");
+	var ipGroups = ipRegex.exec(fqdn);
+	if (!gs.nil(ipGroups))
+		return null;
+
+    // make sure it has at least 2 dots
+    var parts = fqdn.split('.');
+    if (parts.length < 3)
+		return null;
+
+	// parse with regex
+	try {
+		var regex = gs.getProperty('glide.discovery.fqdn.regex', "^([^.]+)\\.((?:[^.]+\\.)+[^.]+)$");
+		var fqdnRegex = new RegExp(regex);
+		var groups = fqdnRegex.exec(fqdn);
+		if (groups.length != 3)
+			return null;
+	
+		return groups[2];
+	} catch (e) {
+		gs.log("FQDN parsing failed. The regex '" + regexStr + "' was not able to parse '" + fqdn + "'. The error is " + e.message, "warning");
+	}
+};
+
+/**
  * Return global value for discovery_source
  */
 TADDMHelper.getDiscoverySource = function()
@@ -25,7 +101,7 @@ TADDMHelper.getDiscoverySource = function()
  */
 TADDMHelper.nil = function(item)
 {
-    return (item == null) || (typeof item == 'undefined') || ('' == '' + item);
+    return gs.nil(item);
 };
 
 /**
@@ -70,7 +146,17 @@ TADDMHelper.getComputerName = function(source) {
 	if (cClass === 'cmdb_ci_mainframe_lpar' && label != '')
 	{
 		// if mainframe LPAR, use label instead of name
-		return label;
+		name = label;
+	}
+	
+	if (!gs.nil(name))
+	{
+		// change case if necessary
+		var changeCase = gs.getProperty('glide.discovery.hostname.case', 'No change');
+		if (changeCase == 'Lower case')
+			name = name.toLowerCase();
+		else if (changeCase == 'Upper case') 
+			name = name.toUpperCase();
 	}
 	
 	return name;
@@ -79,40 +165,33 @@ TADDMHelper.getComputerName = function(source) {
 // deprecated, use getComputerName(source)
 TADDMHelper.getName = function(name, fqdn) {
 	
-	var hn = new global.HostnameJS();
-	
-	// TLD required
-	if ( name.match(/(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{0,62}[a-zA-Z0-9]\.)+[a-zA-Z]{2,63}$)/i) != null )
+	// nothing to process
+	if (gs.nil(name) && gs.nil(fqdn))
 	{
-		// name is set to the fqdn, use host name instead
-		var shortn = hn.format(name);
-		return shortn;
+		return null;
 	}
 	
-	if ( name.match(/[ ]/) != null)
+	// if a space occurs, can't process
+	if (!gs.nil(name) && name.indexOf(" ") > -1)
+		return null;
+	
+	// if name is set to fqdn, parse out the hostname
+	var domainName = this.getDomainName(name);
+	if (domainName != null)
 	{
-		// the name contains a space (e.g. vCenter comment)
-
-		// use string before space if we can't find hostname
-		var hostname = name.substring(0, name.indexOf(' '));
-		
-		if ((fqdn != null) && (typeof fqdn != 'undefined') && !gs.nil(fqdn))
+		// name is set to the fqdn, use host name instead
+		return name.replace("."+domainName, "");
+	}
+	
+	// try and get hostname from fqdn if name is nil
+	if (gs.nil(name) && !gs.nil(fqdn))
+	{
+		var hostName = this.getHostName(fqdn);
+		if (hostName != null)
 		{
-			if (fqdn.indexOf('.') == -1)
-			{
-				// fqdn is already set to hostname
-				hostname = hn.format(fqdn);
-			}
-
-			// check for TLD
-			if ( fqdn.match(/(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{0,62}[a-zA-Z0-9]\.)+[a-zA-Z]{2,63}$)/i) != null )
-			{
-				// use hostname from fqdn
-				hostname = hn.format(fqdn);	
-			}
+			// return hostname captured from fqdn
+			return hostName;
 		}
-		
-		return hostname;
 	}
 	
 	return name;
@@ -121,6 +200,7 @@ TADDMHelper.getName = function(name, fqdn) {
 TADDMHelper.findComputer = function(id) {
     // Find the GUID in the correlation_id field
     var gr = new GlideRecord("cmdb_ci_computer");
+	// TODO this probably should be taddm guid instead of correlation
     gr.addQuery("correlation_id", id);
     gr.query();
     if (gr.next())
@@ -211,13 +291,13 @@ TADDMHelper.prototype = {
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2018-07-02 12:45:13</sys_created_on>
         <sys_id>18894cf1db03130061e670adbf9619a9</sys_id>
-        <sys_mod_count>12</sys_mod_count>
+        <sys_mod_count>19</sys_mod_count>
         <sys_name>TADDMHelper</sys_name>
         <sys_package display_value="TADDM Now" source="x_20712_taddm_now">dd9e5530db43130061e670adbf9619b8</sys_package>
         <sys_policy>read</sys_policy>
         <sys_scope display_value="TADDM Now">dd9e5530db43130061e670adbf9619b8</sys_scope>
         <sys_update_name>sys_script_include_18894cf1db03130061e670adbf9619a9</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2018-09-22 19:24:19</sys_updated_on>
+        <sys_updated_on>2018-09-24 18:35:48</sys_updated_on>
     </sys_script_include>
 </record_update>

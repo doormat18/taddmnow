@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database>
-    <element attributes="extension_model=partition" label="Base Configuration Item" max_length="40" name="cmdb" sizeclass="2778" type="collection">
+    <element attributes="extension_model=partition" label="Base Configuration Item" max_length="40" name="cmdb" sizeclass="3527" type="collection">
         <element label="TADDM GUID" max_length="32" name="x_20712_taddm_now_taddm_guid" type="string"/>
     </element>
 </database>

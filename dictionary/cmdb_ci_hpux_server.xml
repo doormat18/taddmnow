@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <database>
-    <element audit="true" extends="cmdb_ci_unix_server" label="HPUX Server" max_length="40" name="cmdb_ci_hpux_server" type="collection">
+    <element audit="true" extends="cmdb_ci_unix_server" label="HPUX Server" max_length="40" name="cmdb_ci_hpux_server" sizeclass="1" type="collection">
         <element label="Discovery Status" max_length="40" name="x_20712_taddm_now_discovery_status" type="string"/>
         <element label="TADDM GUID" max_length="32" name="x_20712_taddm_now_taddm_guid" type="string"/>
     </element>
